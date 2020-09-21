@@ -241,7 +241,7 @@
         anterior++
       }
 
-      if (individuo.pesoTotal > 20 && individuo.tempoTotal > 72) {
+      if (individuo.pesoTotal > 20 || individuo.tempoTotal > 72) {
         populacao.splice(individuoIndex, 1)
       }
     }
