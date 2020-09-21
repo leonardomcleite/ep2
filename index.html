@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Document</title>
+</head>
+<body>
+  <h1>Joana Sandiego, a Ladra Viajante</h1>
+  <div id="resumo" class="resumo">
+    
+  </div>
+  <div id="result" class="tabs"></div>
+</body>
+
+<style>
+  .tabs {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 4px -2px rgba(0,0,0,0.5);
+  }
+  .tab {
+    width: 100%;
+    color: white;
+    overflow: hidden;
+  }
+  .tab-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background: #2c3e50;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .tab-label:hover {
+    background: darken(#2c3e50, 10%);
+  }
+  .tab-label::after {
+    content: "\276F";
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    transition: all .35s;
+  }
+  
+  .tab-content {
+    max-height: 0;
+    padding: 0 1em;
+    color: #2c3e50;
+    background: white;
+    transition: all .35s;
+  }
+  .tab-close {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1em;
+    font-size: 0.75em;
+    background: #2c3e50;
+    cursor: pointer;
+  }
+  .tab-close:hover {
+    background: darken(#2c3e50, 10%);
+  }
+
+  input:checked + .tab-label {
+    background: darken(#2c3e50, 10%);
+  }
+  input:checked + .tab-label::after {
+    transform: rotate(90deg);
+  }
+  input:checked ~ .tab-content {
+    max-height: 100vh;
+    padding: 1em;
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+  }
+
+  .result {
+    display: flex;
+    margin: 10px;
+  }
+  .cidade:after {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 0; 
+    height: 0; 
+    margin: 0 10px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid green;
+  }
+  .cidade {
+    display: flex;
+  }
+  .cidade:last-child .values, .cidade:last-child:after {
+    display: none;
+  }
+  .contents {
+    display: flex;
+    flex-direction: column;
+  }
+  .values {
+    padding: 10px 0 0 10px;
+    font-weight: bold;
+  }
+  .values span {
+    font-weight: 100;
+  }
+  h3 {
+    margin: 5px;
+  }
+  .resumo {
+    margin: 40px 0;
+  }
+</style>
+<script>
+
+  var custosTransporte = [  {      "cidade1": "Escondidos",      "cidade2": "Santa Paula",      "tempo": 6,      "custo": 780  },  {      "cidade1": "Escondidos",      "cidade2": "Campos",      "tempo": 5,      "custo": 350  },  {      "cidade1": "Escondidos",      "cidade2": "Riacho de Fevereiro",      "tempo": 1,      "custo": 65  },  {      "cidade1": "Escondidos",      "cidade2": "Algas",      "tempo": 7,      "custo": 658  },  {      "cidade1": "Escondidos",      "cidade2": "Além-do-Mar",      "tempo": 5,      "custo": 535  },  {      "cidade1": "Escondidos",      "cidade2": "Guardião",      "tempo": 6,      "custo": 840  },  {      "cidade1": "Escondidos",      "cidade2": "Foz da Água Quente",      "tempo": 5,      "custo": 440  },  {      "cidade1": "Escondidos",      "cidade2": "Leão",      "tempo": 3,      "custo": 186  },  {      "cidade1": "Escondidos",      "cidade2": "Granada",      "tempo": 7,      "custo": 413  },  {      "cidade1": "Escondidos",      "cidade2": "Lagos",      "tempo": 5,      "custo": 675  },  {      "cidade1": "Escondidos",      "cidade2": "Ponte-do-Sol",      "tempo": 9,      "custo": 504  },  {      "cidade1": "Escondidos",      "cidade2": "Porto",      "tempo": 6,      "custo": 624  },  {      "cidade1": "Escondidos",      "cidade2": "Limões",      "tempo": 3,      "custo": 261  },  {      "cidade1": "Santa Paula",      "cidade2": "Campos",      "tempo": 4,      "custo": 404  },  {      "cidade1": "Santa Paula",      "cidade2": "Riacho de Fevereiro",      "tempo": 8,      "custo": 1192  },  {      "cidade1": "Santa Paula",      "cidade2": "Algas",      "tempo": 5,      "custo": 370  },  {      "cidade1": "Santa Paula",      "cidade2": "Além-do-Mar",      "tempo": 6,      "custo": 780  },  {      "cidade1": "Santa Paula",      "cidade2": "Guardião",      "tempo": 9,      "custo": 693  },  {      "cidade1": "Santa Paula",      "cidade2": "Foz da Água Quente",      "tempo": 3,      "custo": 390  },  {      "cidade1": "Santa Paula",      "cidade2": "Leão",      "tempo": 10,      "custo": 830  },  {      "cidade1": "Santa Paula",      "cidade2": "Granada",      "tempo": 4,      "custo": 248  },  {      "cidade1": "Santa Paula",      "cidade2": "Lagos",      "tempo": 8,      "custo": 512  },  {      "cidade1": "Santa Paula",      "cidade2": "Ponte-do-Sol",      "tempo": 3,      "custo": 390  },  {      "cidade1": "Santa Paula",      "cidade2": "Porto",      "tempo": 4,      "custo": 320  },  {      "cidade1": "Santa Paula",      "cidade2": "Limões",      "tempo": 10,      "custo": 850  },  {      "cidade1": "Campos",      "cidade2": "Riacho de Fevereiro",      "tempo": 6,      "custo": 828  },  {      "cidade1": "Campos",      "cidade2": "Algas",      "tempo": 3,      "custo": 369  },  {      "cidade1": "Campos",      "cidade2": "Além-do-Mar",      "tempo": 2,      "custo": 118  },  {      "cidade1": "Campos",      "cidade2": "Guardião",      "tempo": 8,      "custo": 944  },  {      "cidade1": "Campos",      "cidade2": "Foz da Água Quente",      "tempo": 5,      "custo": 610  },  {      "cidade1": "Campos",      "cidade2": "Leão",      "tempo": 3,      "custo": 234  },  {      "cidade1": "Campos",      "cidade2": "Granada",      "tempo": 2,      "custo": 294  },  {      "cidade1": "Campos",      "cidade2": "Lagos",      "tempo": 2,      "custo": 168  },  {      "cidade1": "Campos",      "cidade2": "Ponte-do-Sol",      "tempo": 2,      "custo": 252  },  {      "cidade1": "Campos",      "cidade2": "Porto",      "tempo": 9,      "custo": 1017  },  {      "cidade1": "Campos",      "cidade2": "Limões",      "tempo": 8,      "custo": 1200  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Algas",      "tempo": 5,      "custo": 485  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Além-do-Mar",      "tempo": 6,      "custo": 360  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Guardião",      "tempo": 10,      "custo": 750  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Foz da Água Quente",      "tempo": 10,      "custo": 1390  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Leão",      "tempo": 4,      "custo": 536  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Granada",      "tempo": 8,      "custo": 856  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Lagos",      "tempo": 3,      "custo": 201  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Ponte-do-Sol",      "tempo": 7,      "custo": 931  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Porto",      "tempo": 2,      "custo": 160  },  {      "cidade1": "Riacho de Fevereiro",      "cidade2": "Limões",      "tempo": 5,      "custo": 330  },  {      "cidade1": "Algas",      "cidade2": "Além-do-Mar",      "tempo": 5,      "custo": 440  },  {      "cidade1": "Algas",      "cidade2": "Guardião",      "tempo": 9,      "custo": 936  },  {      "cidade1": "Algas",      "cidade2": "Foz da Água Quente",      "tempo": 2,      "custo": 174  },  {      "cidade1": "Algas",      "cidade2": "Leão",      "tempo": 5,      "custo": 365  },  {      "cidade1": "Algas",      "cidade2": "Granada",      "tempo": 8,      "custo": 1192  },  {      "cidade1": "Algas",      "cidade2": "Lagos",      "tempo": 3,      "custo": 435  },  {      "cidade1": "Algas",      "cidade2": "Ponte-do-Sol",      "tempo": 5,      "custo": 320  },  {      "cidade1": "Algas",      "cidade2": "Porto",      "tempo": 6,      "custo": 546  },  {      "cidade1": "Algas",      "cidade2": "Limões",      "tempo": 3,      "custo": 432  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Guardião",      "tempo": 7,      "custo": 833  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Foz da Água Quente",      "tempo": 2,      "custo": 292  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Leão",      "tempo": 1,      "custo": 97  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Granada",      "tempo": 6,      "custo": 582  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Lagos",      "tempo": 1,      "custo": 147  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Ponte-do-Sol",      "tempo": 4,      "custo": 332  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Porto",      "tempo": 7,      "custo": 763  },  {      "cidade1": "Além-do-Mar",      "cidade2": "Limões",      "tempo": 5,      "custo": 645  },  {      "cidade1": "Guardião",      "cidade2": "Foz da Água Quente",      "tempo": 9,      "custo": 981  },  {      "cidade1": "Guardião",      "cidade2": "Leão",      "tempo": 1,      "custo": 60  },  {      "cidade1": "Guardião",      "cidade2": "Granada",      "tempo": 10,      "custo": 680  },  {      "cidade1": "Guardião",      "cidade2": "Lagos",      "tempo": 9,      "custo": 603  },  {      "cidade1": "Guardião",      "cidade2": "Ponte-do-Sol",      "tempo": 1,      "custo": 74  },  {      "cidade1": "Guardião",      "cidade2": "Porto",      "tempo": 7,      "custo": 455  },  {      "cidade1": "Guardião",      "cidade2": "Limões",      "tempo": 8,      "custo": 1088  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Leão",      "tempo": 7,      "custo": 567  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Granada",      "tempo": 7,      "custo": 378  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Lagos",      "tempo": 6,      "custo": 762  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Ponte-do-Sol",      "tempo": 3,      "custo": 408  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Porto",      "tempo": 4,      "custo": 576  },  {      "cidade1": "Foz da Água Quente",      "cidade2": "Limões",      "tempo": 1,      "custo": 143  },  {      "cidade1": "Leão",      "cidade2": "Granada",      "tempo": 1,      "custo": 122  },  {      "cidade1": "Leão",      "cidade2": "Lagos",      "tempo": 1,      "custo": 147  },  {      "cidade1": "Leão",      "cidade2": "Ponte-do-Sol",      "tempo": 3,      "custo": 168  },  {      "cidade1": "Leão",      "cidade2": "Porto",      "tempo": 10,      "custo": 800  },  {      "cidade1": "Leão",      "cidade2": "Limões",      "tempo": 9,      "custo": 846  },  {      "cidade1": "Granada",      "cidade2": "Lagos",      "tempo": 2,      "custo": 174  },  {      "cidade1": "Granada",      "cidade2": "Ponte-do-Sol",      "tempo": 7,      "custo": 1036  },  {      "cidade1": "Granada",      "cidade2": "Porto",      "tempo": 3,      "custo": 237  },  {      "cidade1": "Granada",      "cidade2": "Limões",      "tempo": 4,      "custo": 444  },  {      "cidade1": "Lagos",      "cidade2": "Ponte-do-Sol",      "tempo": 1,      "custo": 130  },  {      "cidade1": "Lagos",      "cidade2": "Porto",      "tempo": 10,      "custo": 800  },  {      "cidade1": "Lagos",      "cidade2": "Limões",      "tempo": 8,      "custo": 952  },  {      "cidade1": "Ponte-do-Sol",      "cidade2": "Porto",      "tempo": 10,      "custo": 1020  },  {      "cidade1": "Ponte-do-Sol",      "cidade2": "Limões",      "tempo": 9,      "custo": 558  },  {      "cidade1": "Porto",      "cidade2": "Limões",      "tempo": 9,      "custo": 513  }]
+  var itens = [{  "item": "Coroa do Rei João II ",  "peso": 5,  "tempoRoubo": 10,  "valor": 10000,  "cidade": "Santa Paula" }, {  "item": "Espada sagrada ",  "peso": 6,  "tempoRoubo": 5,  "valor": 6500,  "cidade": "Campos" }, {  "item": "Cálice do Santo Graal ",  "peso": 2,  "tempoRoubo": 6,  "valor": 7000,  "cidade": "Riacho de Fevereiro" }, {  "item": "Colar de casamento da rainha Vanessa 4",  "peso": 1,  "tempoRoubo": 7,  "valor": 2500,  "cidade": "Algas" }, {  "item": "Maior diamante do continente ",  "peso": 2,  "tempoRoubo": 10,  "valor": 5400,  "cidade": "Além-do-Mar" }, {  "item": "Primeira edição do livro \"O Livro Azul\"Primeira edição do livro \"O Livro Azul\"",  "peso": 1,  "tempoRoubo": 2,  "valor": 3000,  "cidade": "Guardião" }, {  "item": "Quadro do maior pintor do século",  "peso": 4,  "tempoRoubo": 4,  "valor": 2000,  "cidade": "Foz da Água Quente" }, {  "item": "Taça da Copa do Mundo de Corrida de Cavalo",  "peso": 2,  "tempoRoubo": 5,  "valor": 4000,  "cidade": "Leão" }, {  "item": "Fóssil da primeira galinha conhecida",  "peso": 2,  "tempoRoubo": 1,  "valor": 2500,  "cidade": "Granada" }, {  "item": "Primeira moeda de $1 do país ",  "peso": 1,  "tempoRoubo": 7,  "valor": 3000,  "cidade": "Lagos" }, {  "item": "Busto do líder da Revolução Pavão",  "peso": 6,  "tempoRoubo": 5,  "valor": 1500,  "cidade": "Ponte-do-Sol" }, {  "item": "Flecha do caçador pré-histórico ",  "peso": 1,  "tempoRoubo": 2,  "valor": 2300,  "cidade": "Porto" }, {  "item": "Capacete de guerra antigo ",  "peso": 2,  "tempoRoubo": 4,  "valor": 4000,  "cidade": "Limões" }]
+  var populacao = []
+
+  init()
+
+  function init() {
+    while (populacao.length < 10) {
+      populacao.push(gerarIndividuo())
+      populacao = fitness()
+    }
+
+    var lucro = 0;
+    var tentativas = 0;
+    var condicaoDeParada = true;
+    while (condicaoDeParada) {
+      var popMut = mutacao(populacao)
+      var popCross = crossOver(populacao, popMut)
+      populacao = [...populacao, ...popMut, ...popCross]
+      populacao = fitness();
+      if (populacao[0].lucroTotal <= lucro) {
+        tentativas++;
+        if (tentativas > 500)
+          condicaoDeParada = false;
+      } else {
+        lucro = populacao[0].lucroTotal;
+        tentativas = 0;
+      }
+    }
+    // <div class="seta seta-direita"></div>
+
+    var cam = ``;
+    for (let indexCam = 0; indexCam < (populacao[0].caminho.length) ; indexCam++) {
+      if (indexCam > 0 && populacao[0].caminho[indexCam + 1] === "Escondidos")
+        break
+
+      const element = populacao[0].caminho[indexCam];
+      cam += `<div class="tab">
+        <input type="checkbox" id="chck${indexCam}" checked>
+        <label class="tab-label" for="chck${indexCam}">${element} > ${populacao[0].caminho[indexCam + 1]}</label>
+        <div class="tab-content">
+          <div class="contents">
+          <strong>${findItem(populacao[0].caminho[indexCam + 1], 'item')}</strong>
+          <div class="values">
+            <div>Valor: <span class="label-value">R$ ${findItem(populacao[0].caminho[indexCam + 1], 'valor')}</span></div>
+            <div>Pêso: <span class="label-value">${findItem(populacao[0].caminho[indexCam + 1], 'peso')} Kg</span></div>
+            <div>Tempo de Roubo: <span class="label-value">${findItem(populacao[0].caminho[indexCam + 1], 'tempoRoubo')} Hrs</span></div>
+            <div>Custo transporte: <span class="label-value">R$ ${findCusto(element, populacao[0].caminho[indexCam + 1], 'custo')}</span></div>
+            <div>Tempo transporte: <span class="label-value">${findCusto(element, populacao[0].caminho[indexCam + 1], 'tempo')} Hrs</span></div>
+          </div>
+        </div>
+        </div>
+      </div>`
+      
+    }
+
+    var resumo = `
+      <h2>Resumo do Roubo:</h2>
+      <h3>Lucro final: <span class="label-value">R$ ${populacao[0].lucroTotal}</span></h3>
+      <h3>Pêso Final: <span class="label-value">${populacao[0].pesoTotal} Kg</span></h3>
+      <h3>Tempo Total Roubo: <span class="label-value">${populacao[0].tempoTotal} Hrs</span></h3>
+    `
+
+    document.getElementById('resumo').innerHTML = resumo  
+    document.getElementById('result').innerHTML = cam  
+  }
+
+  function findItem(cidade, campo) {
+    try {
+      return itens.find(it => it.cidade === cidade)[campo]
+    } catch (error) {
+      return 'Erro'
+    }
+  }
+
+  function findCusto(cidade1, cidade2, campo) {
+    try {
+      return custosTransporte.find(it => it.cidade1 === cidade1 && cidade2 === cidade2)[campo]
+    } catch (error) {
+      return 'Erro'
+    }
+  }
+
+  function gerarIndividuo() {
+    var item = shuffle(["Santa Paula","Campos","Riacho de Fevereiro","Algas","Além-do-Mar","Guardião","Foz da Água Quente","Leão","Granada","Lagos","Ponte-do-Sol","Porto","Limões","Escondidos"])
+    item.caminho.unshift("Escondidos")
+    return item
+  }
+
+  function fitness() {
+    for (let individuoIndex = 0; individuoIndex < populacao.length; individuoIndex++) {
+      const individuo = populacao[individuoIndex];
+      
+      individuo.custoTotal = 0
+      individuo.ganhoTotal = 0
+      individuo.pesoTotal = 0
+      individuo.lucroTotal = 0
+      individuo.tempoTotal = 0
+      var anterior = 0
+      
+      for (var i = 1; i < individuo.caminho.length; i++) {
+        var c1 = individuo.caminho[anterior]
+        var c2 = individuo.caminho[i]
+        if (c2 === "Escondidos")
+          break
+        
+        var  transporte = custosTransporte.find(cst => cst.cidade1 === c1 && cst.cidade2 === c2)
+        if (!transporte) {
+          populacao.splice(individuoIndex, 1)
+          individuoIndex--
+          break
+        }
+        individuo.custoTotal += transporte.custo
+        var item = itens.find(item => item.cidade === c2)
+        individuo.ganhoTotal += item.valor
+        individuo.pesoTotal += item.peso
+        individuo.lucroTotal += individuo.ganhoTotal - individuo.custoTotal
+        individuo.tempoTotal += (item.tempoRoubo + transporte.tempo)
+
+        anterior++
+      }
+
+      if (individuo.pesoTotal > 20 && individuo.tempoTotal > 72) {
+        populacao.splice(individuoIndex, 1)
+      }
+    }
+
+    populacao.sort(function (a, b) {
+      if (a.lucroTotal > b.lucroTotal) return -1
+      if (a.lucroTotal < b.lucroTotal) return 1
+      return 0;
+    });
+
+    return populacao.splice(0, 10)
+  }
+
+  function mutacao(populacao) {
+    var populacaoMutada = copy(populacao)
+    
+    for (let i = 0; i < populacaoMutada.length; i++) {
+      const individuo = populacaoMutada[i];
+      for (let j = 1; j < individuo.caminho.length; j++) {
+        var indiceAleatorio = aleatorioEntre(1, individuo.caminho.length);
+        [individuo.caminho[j], individuo.caminho[indiceAleatorio]] = [individuo.caminho[indiceAleatorio], individuo.caminho[j]];
+      }
+    }
+
+    return populacaoMutada
+  }
+
+  function crossOver(pop1, pop2) {
+    var populacaoCrossOver = []
+    var populacao1 = copy(pop1)
+    var populacao2 = copy(pop2)
+
+    var length = populacao1.length < populacao2.length ? populacao1.length : populacao2.length
+
+    for (let i = 0; i < length; i++) {
+      let pp1 = copy(populacao1)[i].caminho
+      pp1.shift()
+      var indice1 = pp1.findIndex(item => item === "Escondidos")
+      indice1++
+
+      let pp2 = copy(populacao2)[i].caminho
+      pp2.shift()
+      var indice2 = pp2.findIndex(item => item === "Escondidos")
+      indice2++;
+      [populacao1[i].caminho[indice1], populacao1[i].caminho[indice2]] = [populacao1[i].caminho[indice2], populacao1[i].caminho[indice1]];
+      [populacao2[i].caminho[indice2], populacao2[i].caminho[indice1]] = [populacao2[i].caminho[indice1], populacao2[i].caminho[indice2]];
+    }
+    
+    populacaoCrossOver = [...populacao1, ...populacao2]
+
+    return populacaoCrossOver
+  }
+
+  //Cria uma copia sem referencia do objeto
+  function copy(item) {
+    return item ? JSON.parse(JSON.stringify(item)) : []
+  }
+
+  function aleatorioEntre(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  function shuffle(lista) {
+    var indice = lista.length
+    var listaEmbaralhada = copy(lista)
+    
+    while(indice) {
+      var indiceAleat = aleatorioEntre(0, indice--);
+      [listaEmbaralhada[indice], listaEmbaralhada[indiceAleat]] = [listaEmbaralhada[indiceAleat], listaEmbaralhada[indice]];
+    }
+
+    return {
+      caminho: listaEmbaralhada,
+      custoTotal: 0,
+      ganhoTotal: 0,
+      pesoTotal: 0,
+      tempoTotal: 0,
+    }
+  }
+
+</script>
+</html>
